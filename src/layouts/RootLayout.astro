@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+
+const { title = '' } = Astro.props;
+
+type MetaData = {
+    site_description: string;
+    authors: string[];
+    icon_path: string;
+    title: string;
+}
+
+const meta_data: MetaData = {
+    site_description: (
+        "This is Mrs. Malorie's website, a hub for educational " + 
+        "resources and information about the classroom."
+    ),
+    authors: ["Mrs. Malorie", "Novice Engineer"],
+    icon_path: "/favicon.ico",
+    title: title || "Missing Title"
+};
+
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content={meta_data.site_description}>
+
+        {meta_data.authors.map(author => (
+            <meta name="author" content={author} />
+        ))}
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="icon" href={meta_data.icon_path} type="image/x-icon">
+
+        <title>{meta_data.title}</title>
+    </head>
+    <body>
+        <slot/>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+---
+import RootLayout from "./RootLayout.astro";
+
+const { title = '' } = Astro.props;
+---
+
+<RootLayout
+    title={title}
+>
+    <!-- TODO: Add Navigation Layout Elements to the Page. -->
+    <slot />
+</RootLayout>
