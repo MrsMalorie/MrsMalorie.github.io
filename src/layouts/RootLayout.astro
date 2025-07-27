@@ -23,7 +23,6 @@ const meta_data: MetaData = {
     icon_path: "/favicon.ico",
     title: title || "Missing Title"
 };
-
 ---
 
 <!DOCTYPE html>
@@ -45,4 +44,21 @@ const meta_data: MetaData = {
     <body>
         <slot/>
     </body>
+
+    <style>
+        body {
+            width: 100vw;
+            min-width: 100vw;
+            max-width: 100vw;
+
+            min-height: 100vh;
+
+            margin: 0;
+            padding: 0;
+
+            font-family: "Bitter", serif;
+            background-color: white;
+            color: black;
+        }
+    </style>
 </html>
