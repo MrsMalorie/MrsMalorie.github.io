@@ -1,7 +1,11 @@
 ---
 import RootLayout from "./RootLayout.astro";
 
-const { title = '' } = Astro.props;
+type NavLayoutProps = {
+    title?: string;
+};
+
+const { title = '' } = Astro.props as NavLayoutProps;
 ---
 
 <RootLayout

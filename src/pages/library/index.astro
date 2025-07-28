@@ -1,9 +1,10 @@
 ---
 import NavLayout from "../../layouts/NavLayout.astro"
+import BookTable from "../../components/BookTable.jsx"
 ---
 
 <NavLayout
 	title="Class Library"
 >
-	<h1>Library</h1>
+	<BookTable client:load />
 </NavLayout>

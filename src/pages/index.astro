@@ -1,0 +1,40 @@
+---
+import NavLayout from "../layouts/NavLayout.astro";
+---
+
+<NavLayout
+    title="Home"
+>
+    <!-- Hero Section -->
+    <div
+        class={
+            "w-screen h-screen flex flex-col justify-center " + 
+            "items-center text-center from-white bg-linear-to-t " +
+            "to-[#cde1ff]"
+        }
+    >
+        <h1
+            class="font-[Homemade_Apple] text-4xl sm:text-6xl"
+        >
+            Mrs. Malorie&apos;s
+        </h1>
+        
+        <h2
+            class="text-2xl sm:text-4xl font-bold tracking-[.25em] mt-2"
+        >
+            Classroom Website
+        </h2>
+
+        <a
+            href="/library"
+            class={
+                "mt-6 rounded-2xl bg-white hover:bg-[#f5f3f5] px-6 py-3 " +
+                "shadow-[0_8px_0_0_rgba(0,0,0,0.15)] transition duration-300 " +
+                "hover:shadow-[0_4px_0_0_rgba(0,0,0,0.15)] ease-in-out " +
+                "hover:translate-y-[4px]"
+            }
+        >
+            Class Library
+        </a>
+    </div>
+</NavLayout>
