@@ -31,6 +31,8 @@ const meta_data: MetaData = {
         <meta charset="UTF-8">
         <meta name="description" content={meta_data.site_description}>
 
+        <meta name="citation" content="Cross and Check icons created by Roundicons - Flaticon">
+
         {meta_data.authors.map(author => (
             <meta name="author" content={author} />
         ))}
@@ -55,8 +57,10 @@ const meta_data: MetaData = {
 
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
 
             font-family: "Bitter", serif;
+            letter-spacing: .15em;
             background-color: white;
             color: black;
         }

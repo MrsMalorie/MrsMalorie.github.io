@@ -20,6 +20,11 @@ type BookFilterParams = {
     },
 };
 
+const MIN_RANGE_VALUE: number = 0;
+const MAX_RANGE_VALUE: number = 999;
+
+const NULL_GENRE_OPTION: string = "N/A";
+
 function searchMatchScore(value: string, search_term: string): number {
     value = value.trim().toLowerCase();
     search_term = search_term.trim().toLowerCase();
@@ -38,10 +43,10 @@ async function loadGenres(): Promise<string[]> {
     const raw_data = await response.json();
 
     if (!raw_data.length || raw_data.length == 0) {
-        return ["N/A"];
+        return [NULL_GENRE_OPTION];
     }
 
-    return ["N/A", ...raw_data as string[]];
+    return [NULL_GENRE_OPTION, ...raw_data as string[]];
 }
 
 async function loadBooks(
@@ -153,11 +158,11 @@ export default function BookTable() {
     const [filter_genres, setFilterGenres] = useState<string[]>([]);
     const [require_test, setTestRequirement] = useState<boolean>(true);
 
-    const [pointLow, setPointLow] = useState<number>(0);
-    const [pointHigh, setPointHigh] = useState<number>(999);
+    const [pointLow, setPointLow] = useState<number>(MIN_RANGE_VALUE);
+    const [pointHigh, setPointHigh] = useState<number>(MAX_RANGE_VALUE);
 
-    const [levelLow, setLevelLow] = useState<number>(0);
-    const [levelHigh, setLevelHigh] = useState<number>(999);
+    const [levelLow, setLevelLow] = useState<number>(MIN_RANGE_VALUE);
+    const [levelHigh, setLevelHigh] = useState<number>(MAX_RANGE_VALUE);
 
     async function fetchBooks() {
         setBooks(await loadBooks({
@@ -211,9 +216,11 @@ export default function BookTable() {
 
                 <Dropdown
                     options={genres}
+                    label="Genre"
                     onOptionSelect={(value: string) => {
-                        if (value == "N/A") {
+                        if (value == NULL_GENRE_OPTION) {
                             setFilterGenres([]);
+                            return;
                         }
 
                         setFilterGenres([value]);
@@ -224,8 +231,8 @@ export default function BookTable() {
                     label="AR Level Range"
                     low_value={levelLow}
                     high_value={levelHigh}
-                    min_value={0}
-                    max_value={999}
+                    min_value={MIN_RANGE_VALUE}
+                    max_value={MAX_RANGE_VALUE}
                     lowChangeCallback={(value: number) => setLevelLow(value)}
                     highChangeCallback={(value: number) => setLevelHigh(value)}
                 />
@@ -234,30 +241,23 @@ export default function BookTable() {
                     label="AR Point Range"
                     low_value={pointLow}
                     high_value={pointHigh}
-                    min_value={0}
-                    max_value={999}
+                    min_value={MIN_RANGE_VALUE}
+                    max_value={MAX_RANGE_VALUE}
                     lowChangeCallback={(value: number) => setPointLow(value)}
                     highChangeCallback={(value: number) => setPointHigh(value)}
                 />
             </div>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Author(s)</th>
-                    <th>Genre(s)</th>
-                    <th>Reading Level</th>
-                    <th>AR Test</th>
-                    <th>Points</th>
-                    <th>Quiz ID</th>
-                </tr>
-            </thead>
+        <table className="mx-auto">
             <tbody>
-                {books.map((book, index) => (
+                {books.map((book, index) => index == 0 ? (
                     <BookRow key={`Book-${index}`} book={book} />
-                ))}
+                ) : (<>
+                    <tr className="border-b-3 border-dashed border-[#d7a350]">
+                    </tr>
+                    <BookRow key={`Book-${index}`} book={book} />
+                </>))}
             </tbody>
         </table>
     </>);
