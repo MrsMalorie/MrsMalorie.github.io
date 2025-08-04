@@ -1,5 +1,6 @@
 ---
 import NavLayout from "../../layouts/NavLayout.astro";
+import BookTable from "../../components/BookTable";
 ---
 
 <NavLayout title="Library">
@@ -7,10 +8,10 @@ import NavLayout from "../../layouts/NavLayout.astro";
         <div 
             class={`
                 min-h-[100vh] striped-background mx-[5%] border-x-20
-                border-x-[#d7a350] bg-blend-overlay bg-[#ffffffcc]
+                border-x-[#d7a350] bg-blend-overlay bg-[#ffffffdf]
             `}
         >
-        
+            <BookTable client:load />
         </div>
     </main>
 </NavLayout>
