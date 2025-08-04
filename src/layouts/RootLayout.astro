@@ -1,68 +1,76 @@
 ---
-import "../styles/global.css";
+import "../styles/global.css"
 
-type RootLayoutProps = {
+export interface RootLayoutProps {
     title?: string;
 };
 
-const { title = '' } = Astro.props as RootLayoutProps;
-
-type MetaData = {
-    site_description: string;
-    authors: string[];
-    icon_path: string;
+interface SiteMetaData {
     title: string;
-}
+    description: string;
+    authors: string[];
+    citations: string[];
+    icon_path: string;
+};
 
-const meta_data: MetaData = {
-    site_description: (
-        "This is Mrs. Malorie's website, a hub for educational " + 
-        "resources and information about the classroom."
+const { title } = Astro.props as RootLayoutProps;
+
+const meta_data: SiteMetaData = {
+    title: title ? `Classroom Website - ${title}` : "Classroom Website",
+    description: (
+        "Welcome to Mrs. Malorie's personal website! A hub for educational " +
+        "resources and information regarding our classroom."
     ),
-    authors: ["Mrs. Malorie", "Novice Engineer"],
-    icon_path: "/favicon.ico",
-    title: title || "Missing Title"
+    authors: [
+        "Mrs. Malorie",
+        "Novice Engineer",
+    ],
+    citations: [
+        "Cross and Check icons created by Roundicons - Flaticon",
+    ],
+    icon_path: "favicon.ico",
 };
 ---
+
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="description" content={meta_data.site_description}>
-
-        <meta name="citation" content="Cross and Check icons created by Roundicons - Flaticon">
-
-        {meta_data.authors.map(author => (
-            <meta name="author" content={author} />
-        ))}
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="icon" href={meta_data.icon_path} type="image/x-icon">
-
         <title>{meta_data.title}</title>
+
+        <meta name="description" content={meta_data.description}>
+
+        {meta_data.authors.map(
+            (author: string) => (
+                <meta name="author" content={author}>
+            )
+        )}
+
+        {meta_data.citations.map(
+            (citation: string) => (
+                <meta name="citation" content={citation}>
+            )
+        )}
+
+        <link rel="icon" href={meta_data.icon_path} type="image/x-icon">
     </head>
     <body>
         <slot/>
     </body>
-
-    <style>
-        body {
-            width: 100vw;
-            min-width: 100vw;
-            max-width: 100vw;
-
-            min-height: 100vh;
-
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-
-            font-family: "Bitter", serif;
-            letter-spacing: .15em;
-            background-color: white;
-            color: black;
-        }
-    </style>
 </html>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+
+        font-family: "Bitter", serif;
+        letter-spacing: 0.15em;
+
+        background-color: white;
+        color: black;
+    }
+</style>
