@@ -1,40 +1,139 @@
 ---
-import NavLayout from "../layouts/NavLayout.astro";
+import NavLayout from "../layouts/NavLayout.astro"
+
+interface HeroHotairBalloon {
+    color: "purple" | "red" | "teal" | "yellow";
+    position: {
+        x: number;
+        y: number;
+        x_dir: "left" | "right";
+        y_dir: "top" | "bottom";
+    };
+    layer: number;
+    size: number;
+};
+
+const balloons: HeroHotairBalloon[] = [
+    {
+        color: "purple",
+        position: {
+            x: 5,
+            y: 20,
+            x_dir: "left",
+            y_dir: "top",
+        },
+        layer: 0,
+        size: 6,
+    },
+    {
+        color: "red",
+        position: {
+            x: 15,
+            y: 5,
+            x_dir: "right",
+            y_dir: "top",
+        },
+        layer: 4,
+        size: 10,
+    },
+    {
+        color: "teal",
+        position: {
+            x: 5,
+            y: 5,
+            x_dir: "right",
+            y_dir: "bottom",
+        },
+        layer: 0,
+        size: 6,
+    },
+    {
+        color: "yellow",
+        position: {
+            x: 10,
+            y: 5,
+            x_dir: "left",
+            y_dir: "bottom",
+        },
+        layer: 4,
+        size: 10,
+    },
+];
 ---
 
-<NavLayout
-    title="Home"
->
-    <!-- Hero Section -->
+<NavLayout title={null}>
+    <!-- HERO SECTION -->
     <div
-        class={
-            "w-screen h-screen flex flex-col justify-center " + 
-            "items-center text-center from-white bg-linear-to-t " +
-            "to-[#cde1ff]"
-        }
+        class={`
+            flex justify-center items-center w-screen h-[80vh] from-white
+            to-[#cde1ff] bg-linear-to-t relative overflow-hidden
+        `}
     >
-        <h1
-            class="font-[Homemade_Apple] text-4xl sm:text-6xl"
-        >
-            Mrs. Malorie&apos;s
-        </h1>
-        
-        <h2
-            class="text-2xl sm:text-4xl font-bold tracking-[.25em] mt-2"
-        >
-            Classroom Website
-        </h2>
+        <div class="text-center z-5 text-shadow-lg/100 text-shadow-white">
+            <h1
+                class="font-[Homemade_Apple] text-4xl md:text-6xl mb-2"
+            >
+                Mrs. Malorie's
+            </h1>
+            <h2
+                class="text-2xl md:text-4xl font-bold tracking-[0.25em]"
+            >
+                Classroom Website
+            </h2>
+        </div>
 
-        <a
-            href="/library"
-            class={
-                "mt-6 rounded-2xl bg-white hover:bg-[#f5f3f5] px-6 py-3 " +
-                "shadow-[0_8px_0_0_rgba(0,0,0,0.15)] transition duration-300 " +
-                "hover:shadow-[0_4px_0_0_rgba(0,0,0,0.15)] ease-in-out " +
-                "hover:translate-y-[4px]"
-            }
-        >
-            Class Library
-        </a>
+        {balloons.map(
+            (balloon: HeroHotairBalloon) => (
+                <img
+                    src={`images/${balloon.color}_hotair_balloon.webp`}
+                    class={`
+                        absolute animate-[float_5s_ease-in-out_infinite]
+                        min-w-[100px]
+                    `}
+                    style={`
+                        ${balloon.position.x_dir}: ${balloon.position.x}%;
+                        ${balloon.position.y_dir}: ${balloon.position.y}%;
+                        z-index: ${balloon.layer};
+                        width: ${balloon.size}%;
+                        animation-delay: ${Math.random() * -5.0}s;
+                    `}
+                />
+            )
+        )}
+
+        <img
+            src={`images/cloud_long.webp`}
+            class={`
+                absolute animate-[slide-right_60s_linear_infinite]
+                w-[20vw] top-[2%] min-w-[200px]
+            `}
+            style=`animation-delay: ${Math.random() * -60.0}s;`
+        />
+
+        <img
+            src={`images/cloud_plump.webp`}
+            class={`
+                absolute animate-[slide-left_60s_linear_infinite]
+                w-[20vw] bottom-[2%] min-w-[200px]
+            `}
+            style=`animation-delay: ${Math.random() * -60.0}s;`
+        />
     </div>
 </NavLayout>
+
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @keyframes slide-right {
+        0% { left: -50vw; }
+        100% { left: 100%; }
+    }
+
+    @keyframes slide-left {
+        0% { right: -50vw; }
+        100% { right: 100%; }
+    }
+</style>
