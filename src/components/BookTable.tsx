@@ -1,6 +1,10 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import InputBar from "./InputBar";
+import Dropdown from "./Dropdown";
 import type Book from "../types/Book"
 import LoadSpinner from "./LoadSpinner";
+import SelectSlider from "./SelectSlider";
+import RangeInputBar from "./RangeInputBar";
 
 export function BookRow({ book }: { book: Book }) {
     const has_ar = book.ar_data != undefined;
@@ -30,6 +34,22 @@ export function BookRow({ book }: { book: Book }) {
 export default function BookTable() {
     const [is_loading, setLoading] = useState<boolean>(true);
     const [books, setBooks] = useState<Book[]>([]);
+
+    const [search_term, setSearchTerm] = useState<string>("");
+    const [filter_genres, setFilterGenres] = useState<string[]>([]);
+    const [filter_ar, setFilterAR] = useState<boolean>(true);
+
+    const LOWEST_LEVEL: number = 0;
+    const HIGHEST_LEVEL: number = 999;
+
+    const [low_level, setLevelLow] = useState<number>(LOWEST_LEVEL);
+    const [high_level, setLevelHigh] = useState<number>(HIGHEST_LEVEL);
+
+    const LOWEST_POINTS: number = 0;
+    const HIGHEST_POINTS: number = 999;
+
+    const [low_points, setPointsLow] = useState<number>(LOWEST_POINTS);
+    const [high_points, setPointsHigh] = useState<number>(HIGHEST_POINTS);
 
     useEffect(() => {
         let temp: Book[] = [{
@@ -68,7 +88,17 @@ export default function BookTable() {
 
     return <>
         <div>
+            <InputBar />
 
+            <div>
+                <SelectSlider />
+
+                <Dropdown />
+
+                <RangeInputBar />
+
+                <RangeInputBar />
+            </div>
         </div>
 
         <div className="w-full px-6 py-8">
