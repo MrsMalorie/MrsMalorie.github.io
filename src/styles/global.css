@@ -1,3 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Homemade+Apple&display=swap');
 
 @import "tailwindcss";
+
+.striped-background {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        #fbc5be 0px,
+        #fbc5be 10px,
+        white 10px,
+        white 20px,
+        #d2c7ff 20px,
+        #d2c7ff 30px,
+        white 30px,
+        white 40px,
+        #c3e1db 40px,
+        #c3e1db 50px,
+        white 50px,
+        white 60px,
+        #fff9c7 60px,
+        #fff9c7 70px,
+        white 70px,
+        white 80px
+    );
+}
