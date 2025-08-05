@@ -1,8 +1,16 @@
 ---
-import NavLayout from "../layouts/NavLayout.astro"
+import NavLayout from "../layouts/NavLayout.astro";
+
+import cloud_long from "../assets/images/cloud_long.webp";
+import cloud_plump from "../assets/images/cloud_plump.webp";
+
+import purple_balloon from "../assets/images/purple_hotair_balloon.webp";
+import red_balloon from "../assets/images/red_hotair_balloon.webp";
+import teal_balloon from "../assets/images/teal_hotair_balloon.webp";
+import yellow_balloon from "../assets/images/yellow_hotair_balloon.webp";
 
 interface HeroHotairBalloon {
-    color: "purple" | "red" | "teal" | "yellow";
+    image: string;
     position: {
         x: number;
         y: number;
@@ -15,7 +23,7 @@ interface HeroHotairBalloon {
 
 const balloons: HeroHotairBalloon[] = [
     {
-        color: "purple",
+        image: purple_balloon.src,
         position: {
             x: 5,
             y: 20,
@@ -26,7 +34,7 @@ const balloons: HeroHotairBalloon[] = [
         size: 6,
     },
     {
-        color: "red",
+        image: red_balloon.src,
         position: {
             x: 15,
             y: 5,
@@ -37,7 +45,7 @@ const balloons: HeroHotairBalloon[] = [
         size: 10,
     },
     {
-        color: "teal",
+        image: teal_balloon.src,
         position: {
             x: 5,
             y: 5,
@@ -48,7 +56,7 @@ const balloons: HeroHotairBalloon[] = [
         size: 6,
     },
     {
-        color: "yellow",
+        image: yellow_balloon.src,
         position: {
             x: 10,
             y: 5,
@@ -101,7 +109,7 @@ const balloons: HeroHotairBalloon[] = [
         {balloons.map(
             (balloon: HeroHotairBalloon) => (
                 <img
-                    src={`images/${balloon.color}_hotair_balloon.webp`}
+                    src={balloon.image}
                     class={`
                         absolute animate-[float_5s_ease-in-out_infinite]
                         min-w-[100px]
@@ -118,7 +126,7 @@ const balloons: HeroHotairBalloon[] = [
         )}
 
         <img
-            src={`images/cloud_long.webp`}
+            src={cloud_long.src}
             class={`
                 absolute animate-[slide-right_60s_linear_infinite]
                 w-[20vw] top-[2%] min-w-[200px]
@@ -127,7 +135,7 @@ const balloons: HeroHotairBalloon[] = [
         />
 
         <img
-            src={`images/cloud_plump.webp`}
+            src={cloud_plump.src}
             class={`
                 absolute animate-[slide-left_60s_linear_infinite]
                 w-[20vw] bottom-[2%] min-w-[200px]
