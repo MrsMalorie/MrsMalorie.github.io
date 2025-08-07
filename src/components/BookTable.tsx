@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import InputBar from "./InputBar";
-import Dropdown, { type DropdownItem } from "./Dropdown";
+import Dropdown from "./Dropdown";
 import type Book from "../types/Book"
 import LoadSpinner from "./LoadSpinner";
 import SelectSlider from "./SelectSlider";
@@ -9,6 +9,7 @@ import RangeInputBar from "./RangeInputBar";
 import check_mark from "../assets/images/checked.webp";
 import cross_mark from "../assets/images/cancel.webp";
 
+import arrow_icon from "../assets/icons/arrow_icon.svg";
 import magnifying_glass from "../assets/icons/magnifying_glass.svg";
 
 const sheet_name: string = "Alphabetical%20by%20Title";
@@ -26,6 +27,12 @@ interface BookSearchData {
         low: number;
         high: number;
     };
+}
+
+function range(start: number, length: number, step: number = 1) {
+    return Array.from({
+        length: length
+    }, ((_, idx: number) => start + idx * step))
 }
 
 export function BookRow({ book }: { book: Book }) {
@@ -90,7 +97,7 @@ async function pullGenreData(null_genre: string): Promise<string[]> {
     return [null_genre, ...[...unique_genres].sort()];
 }
 
-async function pullBookData(search: BookSearchData): Promise<Book[]> {
+async function pullPageCount(search: BookSearchData, page_size: number): Promise<number> {
     const query = encodeURIComponent(
         "SELECT * WHERE " +
         `C >= ${search.level_range.low} AND C <= ${search.level_range.high} ` +
@@ -99,6 +106,35 @@ async function pullBookData(search: BookSearchData): Promise<Book[]> {
         (search.term === '' ? "" : `AND (LOWER(A) CONTAINS '${search.term}' OR LOWER(B) CONTAINS '${search.term}') `) +
         (search.filter_ar ? "AND E = 'Yes' " : "") +
         "ORDER BY LOWER(A) ASC"
+    );
+
+    const response = await fetch(
+        `https://docs.google.com/spreadsheets/d/${sheet_id}/gviz/tq?tq=${query}&sheet=${sheet_name}`
+    );
+    const text = await response.text();
+    const matched_text = text.match(/(?<=\().*(?=\);)/s);
+    if (!matched_text) {
+        return 0;
+    }
+
+    const json = JSON.parse(matched_text[0]);
+    const rows = json?.table?.rows;
+    if (!rows) {
+        return 0;
+    }
+    
+    return Math.ceil(rows.length / page_size);
+}
+
+async function pullBookData(search: BookSearchData, page_index: number, page_size: number): Promise<Book[]> {
+    const query = encodeURIComponent(
+        "SELECT * WHERE " +
+        `C >= ${search.level_range.low} AND C <= ${search.level_range.high} ` +
+        `AND (F IS NULL OR (F >= ${search.point_range.low} AND F <= ${search.point_range.high})) ` +
+        (search.genre === undefined ? "" : `AND D CONTAINS '${search.genre}' `) +
+        (search.term === '' ? "" : `AND (LOWER(A) CONTAINS '${search.term}' OR LOWER(B) CONTAINS '${search.term}') `) +
+        (search.filter_ar ? "AND E = 'Yes' " : "") +
+        `ORDER BY LOWER(A) ASC LIMIT ${page_size} OFFSET ${page_index * page_size}`
     );
 
     const response = await fetch(
@@ -138,9 +174,14 @@ async function pullBookData(search: BookSearchData): Promise<Book[]> {
 }
 
 export default function BookTable() {
+    const MAX_PAGE_SIZE: number = 50;
+
     const [loading_genres, setLoadingGenres] = useState<boolean>(true);
     const [loading_books, setLoadingBooks] = useState<boolean>(true);
 
+    const [page_index, setPageIndex] = useState<number>(0);
+    const [page_count, setPageCount] = useState<number>(0);
+    const [load_flag, setLoadFlag] = useState<boolean>(true);
     const [books, setBooks] = useState<Book[]>([]);
 
     const NULL_GENRE: string = "N/A"
@@ -177,9 +218,40 @@ export default function BookTable() {
     }, []);
 
     useEffect(() => {
+        async function loadPageCount() {
+            setPageCount(await pullPageCount({
+                term: search_term.trim().toLowerCase(),
+                genre: filter_genre === NULL_GENRE ? undefined : filter_genre,
+                filter_ar: filter_ar,
+                level_range: {
+                    low: low_level,
+                    high: high_level,
+                },
+                point_range: {
+                    low: low_points,
+                    high: high_points,
+                },
+            }, MAX_PAGE_SIZE));
+
+            setPageIndex(0);
+            setLoadFlag(!load_flag);
+        }
+
+        loadPageCount();
+    }, [
+        search_term,
+        filter_genre,
+        filter_ar,
+        low_level,
+        high_level,
+        low_points,
+        high_points
+    ]);
+
+    useEffect(() => {
         async function loadBooks() {
             setLoadingBooks(true);
-
+            
             setBooks(await pullBookData({
                 term: search_term.trim().toLowerCase(),
                 genre: filter_genre === NULL_GENRE ? undefined : filter_genre,
@@ -192,21 +264,17 @@ export default function BookTable() {
                     low: low_points,
                     high: high_points,
                 },
-            }));
+            }, page_index, MAX_PAGE_SIZE));
 
             setLoadingBooks(false);
         }
 
-        loadBooks();
-    }, [
-        search_term,
-        filter_genre,
-        filter_ar,
-        low_level,
-        high_level,
-        low_points,
-        high_points
-    ]);
+        if (page_count > 0) {
+            loadBooks();
+        } else {
+            setBooks([]);
+        }
+    }, [load_flag]);
 
     return <>
         <div className="pt-8">
@@ -279,7 +347,7 @@ export default function BookTable() {
         <div className="w-full px-6 py-8">
             <LoadSpinner
                 is_loading={loading_genres || loading_books}
-                loaded_content={books.length > 0 ? (
+                loaded_content={books.length > 0 ? (<>
                     <table className="w-full">
                         <tbody>
                             {books.map((book: Book, index: number) => index > 0
@@ -299,7 +367,54 @@ export default function BookTable() {
                             ))}
                         </tbody>
                     </table>
-                ) : (
+
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <button
+                            className="cursor-pointer size-4 rotate-270"
+                            onClick={() => {
+                                if (page_index > 0) {
+                                    setPageIndex(page_index - 1);
+                                    setLoadFlag(!load_flag);
+                                }
+                            }}
+                        >
+                            <img src={arrow_icon.src} />
+                        </button>
+
+                        {range(
+                            Math.max(0, page_index - 2),
+                            Math.min(5, page_count)
+                        ).map((p_idx: number) => (
+                            <button
+                                className={`${p_idx === page_index
+                                    ? "text-gray-400"
+                                    : "cursor-pointer hover:underline"
+                                }`}
+                                onClick={() => {
+                                    if (p_idx !== page_index) {
+                                        setPageIndex(p_idx);
+                                        setLoadFlag(!load_flag);
+                                    }
+                                }}
+                                key={`Page-Select-${p_idx}`}
+                            >
+                                {p_idx + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="cursor-pointer size-4 rotate-90"
+                            onClick={() => {
+                                if (page_index < page_count - 1) {
+                                    setPageIndex(page_index + 1);
+                                    setLoadFlag(!load_flag);
+                                }
+                            }}
+                        >
+                            <img src={arrow_icon.src} />
+                        </button>
+                    </div>
+                </>) : (
                     <div className="text-center">No Available Books...</div>
                 )}
             />
