@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import InputBar from "./InputBar";
-import Dropdown from "./Dropdown";
+import Dropdown, { type DropdownItem } from "./Dropdown";
 import type Book from "../types/Book"
 import LoadSpinner from "./LoadSpinner";
 import SelectSlider from "./SelectSlider";
@@ -8,6 +8,8 @@ import RangeInputBar from "./RangeInputBar";
 
 import check_mark from "../assets/images/checked.webp";
 import cross_mark from "../assets/images/cancel.webp";
+
+import magnifying_glass from "../assets/icons/magnifying_glass.svg";
 
 export function BookRow({ book }: { book: Book }) {
     const has_ar = book.ar_data != undefined;
@@ -38,8 +40,12 @@ export default function BookTable() {
     const [is_loading, setLoading] = useState<boolean>(true);
     const [books, setBooks] = useState<Book[]>([]);
 
+    const NULL_GENRE: string = "N/A"
+
+    const [genres, setGenres] = useState<string[]>([NULL_GENRE]);
+
     const [search_term, setSearchTerm] = useState<string>("");
-    const [filter_genres, setFilterGenres] = useState<string[]>([]);
+    const [filter_genre, setFilterGenre] = useState<string>(NULL_GENRE);
     const [filter_ar, setFilterAR] = useState<boolean>(true);
 
     const LOWEST_LEVEL: number = 0.0;
@@ -88,10 +94,12 @@ export default function BookTable() {
         }
         setBooks(temp);
 
+        setGenres([NULL_GENRE, "Fiction", "Mystery"]);
+
         setLoading(false);
     }, [
         search_term,
-        filter_genres,
+        filter_genre,
         filter_ar,
         low_level,
         high_level,
@@ -100,38 +108,69 @@ export default function BookTable() {
     ]);
 
     return <>
-        <div>
+        <div className="pt-8">
+            <h1 className="pb-2 px-4 font-bold text-2xl">Search the Class Library</h1>
+
             <InputBar
                 value={search_term}
                 onValueChange={setSearchTerm}
                 placeholder="Search title or author..."
                 input_type="text"
-                bar_icon={undefined}
+                bar_icon={magnifying_glass.src}
                 class="mx-6"
             />
 
             <div className="flex flex-wrap items-center justify-between mt-3 mx-6">
-                <SelectSlider />
+                <div>
+                    <label className="font-bold text-lg">AR</label>
+                    <hr className="pb-2"/>
+                    <SelectSlider
+                        value={filter_ar}
+                        onValueChange={setFilterAR}
+                    />
+                </div>
 
-                <Dropdown />
+                <div>
+                    <label className="font-bold text-lg">Genre</label>
+                    <hr className="pb-2"/>
+                    <Dropdown
+                        value={{
+                            tag: genres[0],
+                            value: 0
+                        }}
+                        options={genres.map((genre: string, index: number) => ({
+                            tag: genre,
+                            value: index,
+                        }))}
+                        onValueChange={(item: DropdownItem) => setFilterGenre(item.tag)}
+                    />
+                </div>
 
-                <RangeInputBar
-                    low_value={low_level}
-                    high_value={high_level}
-                    onLowValueChange={setLevelLow}
-                    onHighValueChange={setLevelHigh}
-                    lower_bound={LOWEST_LEVEL}
-                    upper_bound={HIGHEST_LEVEL}
-                />
+                <div>
+                    <label className="font-bold text-lg">AR Level Range</label>
+                    <hr className="pb-2"/>
+                    <RangeInputBar
+                        low_value={low_level}
+                        high_value={high_level}
+                        onLowValueChange={setLevelLow}
+                        onHighValueChange={setLevelHigh}
+                        lower_bound={LOWEST_LEVEL}
+                        upper_bound={HIGHEST_LEVEL}
+                    />
+                </div>
 
-                <RangeInputBar
-                    low_value={low_points}
-                    high_value={high_points}
-                    onLowValueChange={setPointsLow}
-                    onHighValueChange={setPointsHigh}
-                    lower_bound={LOWEST_POINTS}
-                    upper_bound={HIGHEST_POINTS}
-                />
+                <div>
+                    <label className="font-bold text-lg">AR Point Range</label>
+                    <hr className="pb-2"/>
+                    <RangeInputBar
+                        low_value={low_points}
+                        high_value={high_points}
+                        onLowValueChange={setPointsLow}
+                        onHighValueChange={setPointsHigh}
+                        lower_bound={LOWEST_POINTS}
+                        upper_bound={HIGHEST_POINTS}
+                    />
+                </div>
             </div>
         </div>
 
@@ -142,15 +181,18 @@ export default function BookTable() {
                     <table className="w-full">
                         <tbody>
                             {books.map((book: Book, index: number) => index > 0
-                            ? (<>
-                                <tr>
+                            ? [
+                                <tr key={`Upper-Book-Padding-${index}`}>
                                     <td className="h-4"></td>
-                                </tr>
-                                <tr className="border-t-4 border-dashed border-[#d7a350]">
+                                </tr>,
+                                <tr
+                                    className="border-t-4 border-dashed border-[#d7a350]"
+                                    key={`Lower-Book-Padding-${index}`}
+                                >
                                     <td className="h-4"></td>
-                                </tr>
+                                </tr>,
                                 <BookRow book={book} key={`Book-Row-${index}`} />
-                            </>) : (
+                            ] : (
                                 <BookRow book={book} key={`Book-Row-${index}`} />
                             ))}
                         </tbody>

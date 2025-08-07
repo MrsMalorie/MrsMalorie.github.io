@@ -16,6 +16,7 @@ export interface RangeInputBarProps {
 };
 
 function clamp(value: number, lower_bound: number, upper_bound: number) {
+    console.log(value, lower_bound, upper_bound, Math.max(lower_bound, Math.min(upper_bound, value)))
     return Math.max(lower_bound, Math.min(upper_bound, value));
 }
 
@@ -35,11 +36,12 @@ export default function RangeInputBar(props: RangeInputBarProps) {
                                     )
                             }
                             onValueChange={(value: string) => props.onLowValueChange(clamp(
-                                Number(value ?? props.lower_bound),
+                                value ? Number(value) : props.lower_bound,
                                 props.lower_bound,
                                 props.high_value
                             ))}
                             input_type="number"
+                            class="mb-1 w-25"
                         />
                     </td>
                 </tr>
@@ -56,11 +58,12 @@ export default function RangeInputBar(props: RangeInputBarProps) {
                                     )
                             }
                             onValueChange={(value: string) => props.onHighValueChange(clamp(
-                                Number(value ?? props.upper_bound),
+                                value ? Number(value) : props.upper_bound,
                                 props.low_value,
                                 props.upper_bound
                             ))}
                             input_type="number"
+                            class="w-25"
                         />
                     </td>
                 </tr>
