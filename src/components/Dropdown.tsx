@@ -6,17 +6,22 @@ export interface DropdownItem {
 export interface DropdownProps {
     value: DropdownItem;
     options: DropdownItem[];
-    onValueChange: (item: DropdownItem) => void;
+    onValueChange: (item: any) => void;
+
+    class?: string;
 };
 
 export default function Dropdown(props: DropdownProps) {
-    return <>
-        <select className="border bg-white rounded-full px-3 py-1" >
+    return (
+        <select
+            className={`border bg-white rounded-full px-3 py-1 ${props.class}`}
+            onChange={(ev) => props.onValueChange(ev.currentTarget.value)}
+        >
             {props.options.map((item: DropdownItem, index: number) => (
                 <option value={item.value} key={`Dropdown-Item-${index}`}>
                     {item.tag}
                 </option>
             ))}
         </select>
-    </>
+    );
 }

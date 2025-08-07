@@ -16,7 +16,6 @@ export interface RangeInputBarProps {
 };
 
 function clamp(value: number, lower_bound: number, upper_bound: number) {
-    console.log(value, lower_bound, upper_bound, Math.max(lower_bound, Math.min(upper_bound, value)))
     return Math.max(lower_bound, Math.min(upper_bound, value));
 }
 

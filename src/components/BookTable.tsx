@@ -11,6 +11,23 @@ import cross_mark from "../assets/images/cancel.webp";
 
 import magnifying_glass from "../assets/icons/magnifying_glass.svg";
 
+const sheet_name: string = "Alphabetical%20by%20Title";
+const sheet_id: string = "1kO82qGyNM81LYWyR2rlc3YA4T_Mvaz4OanGQFzumD3k";
+
+interface BookSearchData {
+    term: string;
+    genre?: string;
+    filter_ar: boolean;
+    level_range: {
+        low: number;
+        high: number;
+    };
+    point_range: {
+        low: number;
+        high: number;
+    };
+}
+
 export function BookRow({ book }: { book: Book }) {
     const has_ar = book.ar_data != undefined;
     const points = has_ar ? book.ar_data?.points : "N/A";
@@ -22,7 +39,7 @@ export function BookRow({ book }: { book: Book }) {
                 ? <img src={check_mark.src} className="size-4" />
                 : <img src={cross_mark.src} className="size-4" />
             }&nbsp;AR</td>
-            <td>{book.genres.join("; ")}</td>
+            <td>{book.genres}</td>
             <td>RL:&nbsp;{book.reading_level}</td>
             <td>Pts:&nbsp;{points}</td>
             <td>Quiz:&nbsp;{quiz_id}</td>
@@ -31,13 +48,99 @@ export function BookRow({ book }: { book: Book }) {
             <td colSpan={5} className="font-bold">{book.title}</td>
         </tr>
         <tr>
-            <td colSpan={5} className="font-bold">By:&nbsp;{book.authors.join("; ")}</td>
+            <td colSpan={5} className="font-bold">By:&nbsp;{book.author}</td>
         </tr>
     </>
 }
 
+async function pullGenreData(null_genre: string): Promise<string[]> {
+    const query = encodeURIComponent(
+        "SELECT D, COUNT(D) WHERE D IS NOT NULL GROUP BY D"
+    );
+
+    const response = await fetch(
+        `https://docs.google.com/spreadsheets/d/${sheet_id}/gviz/tq?tq=${query}&sheet=${sheet_name}`
+    );
+    const text = await response.text();
+    const matched_text = text.match(/(?<=\().*(?=\);)/s);
+    if (!matched_text) {
+        return [null_genre];
+    }
+
+    const json = JSON.parse(matched_text[0]);
+    const rows = json?.table?.rows;
+    if (!rows) {
+        return [null_genre];
+    }
+
+    const genre_data: string[] = rows.map((raw: any) => (
+        raw.c[0]?.v.trim()
+    )).filter(Boolean);
+
+    const unique_genres: Set<string> = new Set();
+    genre_data.forEach((datum: string, index: number) => {
+        const genres = datum.split(" / ");
+        if (genres.length > 1) {
+            genres.forEach((genre: string) => unique_genres.add(genre));
+        } else {
+            unique_genres.add(datum);
+        }
+    })
+
+    return [null_genre, ...[...unique_genres].sort()];
+}
+
+async function pullBookData(search: BookSearchData): Promise<Book[]> {
+    const query = encodeURIComponent(
+        "SELECT * WHERE " +
+        `C >= ${search.level_range.low} AND C <= ${search.level_range.high} ` +
+        `AND (F IS NULL OR (F >= ${search.point_range.low} AND F <= ${search.point_range.high})) ` +
+        (search.genre === undefined ? "" : `AND D CONTAINS '${search.genre}' `) +
+        (search.term === '' ? "" : `AND (LOWER(A) CONTAINS '${search.term}' OR LOWER(B) CONTAINS '${search.term}') `) +
+        (search.filter_ar ? "AND E = 'Yes' " : "") +
+        "ORDER BY LOWER(A) ASC"
+    );
+
+    const response = await fetch(
+        `https://docs.google.com/spreadsheets/d/${sheet_id}/gviz/tq?tq=${query}&sheet=${sheet_name}`
+    );
+    const text = await response.text();
+    const matched_text = text.match(/(?<=\().*(?=\);)/s);
+    if (!matched_text) {
+        return [];
+    }
+
+    const json = JSON.parse(matched_text[0]);
+    const rows = json?.table?.rows;
+    if (!rows) {
+        return [];
+    }
+
+    const book_data: Book[] = rows.map((raw: any) => {
+        let book: Book = {
+            title: raw.c[0]?.v ?? "",
+            author: raw.c[1]?.v ?? "",
+            genres: raw.c[3]?.v ?? "",
+            reading_level: raw.c[2]?.v ?? 0,
+            ar_data: (raw.c[4]?.v === "Yes"
+                ? {
+                    points: raw.c[5]?.v ?? 0,
+                    quiz_id: raw.c[6]?.v ?? 0,
+                }
+                : undefined
+            ),
+        };
+
+        return book;
+    });
+
+    return book_data;
+}
+
 export default function BookTable() {
-    const [is_loading, setLoading] = useState<boolean>(true);
+    const [loading_genres, setLoadingGenres] = useState<boolean>(true);
+    const [loading_books, setLoadingBooks] = useState<boolean>(true);
+
     const [books, setBooks] = useState<Book[]>([]);
 
     const NULL_GENRE: string = "N/A"
@@ -62,41 +165,39 @@ export default function BookTable() {
     const [high_points, setPointsHigh] = useState<number>(HIGHEST_POINTS);
 
     useEffect(() => {
-        setLoading(true);
-        let temp: Book[] = [{
-            title: "A Series of Unfortunate Events: The Bad Beginning",
-            authors: ["Lemony Snicket", "John Doe"],
-            genres: ["Fiction", "Mystery"],
-            reading_level: 6.4,
-            ar_data: {
-                points: 4,
-                quiz_id: 41281,
-            },
-        }, {
-            title: "A Series of Unfortunate Events: The Bad Beginning",
-            authors: ["Lemony Snicket"],
-            genres: ["Fiction"],
-            reading_level: 6.4,
-            ar_data: undefined,
-        }];
+        async function loadGenres() {
+            setLoadingGenres(true);
 
-        for (let i = 0; i < 100; ++i) {
-            temp.push({
-                title: "A Series of Unfortunate Events: The Bad Beginning",
-                authors: ["Lemony Snicket"],
-                genres: ["Fiction", "Mystery"],
-                reading_level: 6.4,
-                ar_data: {
-                    points: 4,
-                    quiz_id: 41281,
-                },
-            })
+            setGenres(await pullGenreData(NULL_GENRE));
+
+            setLoadingGenres(false);
         }
-        setBooks(temp);
 
-        setGenres([NULL_GENRE, "Fiction", "Mystery"]);
+        loadGenres();
+    }, []);
 
-        setLoading(false);
+    useEffect(() => {
+        async function loadBooks() {
+            setLoadingBooks(true);
+
+            setBooks(await pullBookData({
+                term: search_term.trim().toLowerCase(),
+                genre: filter_genre === NULL_GENRE ? undefined : filter_genre,
+                filter_ar: filter_ar,
+                level_range: {
+                    low: low_level,
+                    high: high_level,
+                },
+                point_range: {
+                    low: low_points,
+                    high: high_points,
+                },
+            }));
+
+            setLoadingBooks(false);
+        }
+
+        loadBooks();
     }, [
         search_term,
         filter_genre,
@@ -142,7 +243,8 @@ export default function BookTable() {
                             tag: genre,
                             value: index,
                         }))}
-                        onValueChange={(item: DropdownItem) => setFilterGenre(item.tag)}
+                        onValueChange={(genre_idx: number) => setFilterGenre(genres[genre_idx])}
+                        class="max-w-50 sm:max-w-full"
                     />
                 </div>
 
@@ -176,7 +278,7 @@ export default function BookTable() {
 
         <div className="w-full px-6 py-8">
             <LoadSpinner
-                is_loading={is_loading}
+                is_loading={loading_genres || loading_books}
                 loaded_content={books.length > 0 ? (
                     <table className="w-full">
                         <tbody>
