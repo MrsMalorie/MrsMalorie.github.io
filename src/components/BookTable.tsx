@@ -41,7 +41,7 @@ export function BookRow({ book }: { book: Book }) {
     const quiz_id = has_ar ? book.ar_data?.quiz_id : "N/A";
 
     return <>
-        <tr>
+        <tr className="hidden sm:table-row">
             <td className="flex items-center">{has_ar
                 ? <img src={check_mark.src} className="size-4" />
                 : <img src={cross_mark.src} className="size-4" />
@@ -51,6 +51,24 @@ export function BookRow({ book }: { book: Book }) {
             <td>Pts:&nbsp;{points}</td>
             <td>Quiz:&nbsp;{quiz_id}</td>
         </tr>
+
+        <tr className="sm:hidden">
+            <td className="flex items-center" colSpan={2}>{has_ar
+                ? <img src={check_mark.src} className="size-4" />
+                : <img src={cross_mark.src} className="size-4" />
+            }&nbsp;AR</td>
+            <td colSpan={3} className="text-right">{book.genres}</td>
+        </tr>
+
+        <tr className="sm:hidden">
+            <td colSpan={2}>RL:&nbsp;{book.reading_level}</td>
+            <td colSpan={3} className="text-right">Pts:&nbsp;{points}</td>
+        </tr>
+
+        <tr className="sm:hidden">
+            <td colSpan={5}>Quiz:&nbsp;{quiz_id}</td>
+        </tr>
+
         <tr>
             <td colSpan={5} className="font-bold">{book.title}</td>
         </tr>
