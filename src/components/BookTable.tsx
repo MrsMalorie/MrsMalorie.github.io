@@ -49,7 +49,17 @@ export function BookRow({ book }: { book: Book }) {
             <td>{book.genres}</td>
             <td>RL:&nbsp;{book.reading_level}</td>
             <td>Pts:&nbsp;{points}</td>
-            <td>Quiz:&nbsp;{quiz_id}</td>
+            {quiz_id === "N/A"
+                ? <td>Quiz:&nbsp;{quiz_id}</td>
+                : <td>Quiz:&nbsp;
+                    <a
+                        href={`https://www.arbookfind.com/bookdetail.aspx?q=${quiz_id}&l=EN`}
+                        className="pointer-cursor text-blue-500 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >{quiz_id}</a>
+                </td>
+            }
         </tr>
 
         <tr className="sm:hidden">
@@ -66,7 +76,17 @@ export function BookRow({ book }: { book: Book }) {
         </tr>
 
         <tr className="sm:hidden">
-            <td colSpan={5}>Quiz:&nbsp;{quiz_id}</td>
+            {quiz_id === "N/A"
+                ? <td colSpan={5}>Quiz:&nbsp;{quiz_id}</td>
+                : <td colSpan={5}>Quiz:&nbsp;
+                    <a
+                        href={`https://www.arbookfind.com/bookdetail.aspx?q=${quiz_id}&l=EN`}
+                        className="pointer-cursor text-blue-500 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >{quiz_id}</a>
+                </td>
+            }
         </tr>
 
         <tr>
