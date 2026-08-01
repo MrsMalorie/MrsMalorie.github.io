@@ -1,1 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Homemade+Apple&display=swap');
 @import "tailwindcss";
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes slide-right {
+    0% { left: -50vw; }
+    100% { left: 100%; }
+}
+
+@keyframes slide-left {
+    0% { right: -50vw; }
+    100% { right: 100%; }
+}
