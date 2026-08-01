@@ -25,7 +25,7 @@ export default function HomePage() {
 
             {/* Header */}
             <div class="text-center z-5 text-shadow-lg/100 text-shadow-white">
-                <h1 class="font-[Homemade_Apple] text-4xl md:text-6xl mb-2">
+                <h1 class="font-[Homemade_Apple] text-4xl sm:text-5xl lg:text-6xl mb-2">
                     Mrs. Malorie's<br/>Classroom
                 </h1>
             </div>
