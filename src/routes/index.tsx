@@ -31,7 +31,7 @@ export default function HomePage() {
             </div>
 
             {/* Navigation */}
-            <div class="flex flex-col items-center gap-4 mt-8 z-5">
+            <div class="flex flex-wrap justify-center items-center gap-8 mt-8 mx-8 z-5">
                 <LinkButton href="/class-library" label="Class Library" />
                 <LinkButton href="/today" label="In Class Today" />
                 <LinkButton href="/resources" label="Resources" />
