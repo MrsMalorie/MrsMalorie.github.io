@@ -61,33 +61,33 @@ export default function HomePage() {
             {/* Background decoration */}
             <BouncingBalloon
                 src="/assets/purple_hotair_balloon.webp"
-                class="top-[20%] left-[5%] w-[6%]"
+                class="top-[20%] left-[5%] w-[6%] z-0"
             />
 
             <BouncingBalloon
                 src="/assets/red_hotair_balloon.webp"
-                class="top-[5%] right-[15%] w-[10%]"
+                class="top-[5%] right-[15%] w-[10%] z-2"
             />
 
             <BouncingBalloon
                 src="/assets/teal_hotair_balloon.webp"
-                class="bottom-[5%] right-[5%] w-[6%]"
+                class="bottom-[5%] right-[5%] w-[6%] z-0"
             />
 
             <BouncingBalloon
                 src="/assets/yellow_hotair_balloon.webp"
-                class="bottom-[5%] left-[10%] w-[10%]"
+                class="bottom-[5%] left-[10%] w-[10%] z-2"
             />
 
             <img
                 src="/assets/cloud_long.webp"
-                class="absolute animate-[slide-right_60s_linear_infinite] w-[20vw] top-[2%] min-w-[200px]"
+                class="absolute animate-[slide-right_60s_linear_infinite] w-[20vw] top-[2%] min-w-[200px] z-1"
                 style={`animation-delay: ${Math.random() * -60.0}s;`}
             />
 
             <img
                 src="/assets/cloud_plump.webp"
-                class="absolute animate-[slide-left_60s_linear_infinite] w-[20vw] bottom-[2%] min-w-[200px]"
+                class="absolute animate-[slide-left_60s_linear_infinite] w-[20vw] bottom-[2%] min-w-[200px] z-1"
                 style={`animation-delay: ${Math.random() * -60.0}s;`}
             />
         </main>

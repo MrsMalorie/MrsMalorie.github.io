@@ -32,7 +32,7 @@ export default function ResourcesPage() {
                         <li>
                             <a
                                 class="text-blue-700 hover:underline"
-                                href="TODO"
+                                href="https://docs.google.com/document/d/1Z8cldMdo8FyFeRJ3FJu6kpttNEVw7RopZh9MEFaulUE/edit?usp=sharing"
                                 target="_blank"
                             >
                                 Syllabus
@@ -41,7 +41,7 @@ export default function ResourcesPage() {
                         <li>
                             <a
                                 class="text-blue-700 hover:underline"
-                                href="TODO"
+                                href="https://docs.google.com/spreadsheets/d/1780OpdxnXW67WAyYE0tLpRkWLyFH88W75pzlgfKGTBw/edit?usp=sharing"
                                 target="_blank"
                             >
                                 Course Schedule
@@ -63,7 +63,7 @@ export default function ResourcesPage() {
                         <li>
                             <a
                                 class="text-blue-700 hover:underline"
-                                href="TODO"
+                                href="https://drive.google.com/drive/folders/1r6TTGQgiK54NQYbmOgfDhQLNmtIIva02?usp=sharing"
                                 target="_blank"
                             >
                                 2026-2027
@@ -72,7 +72,7 @@ export default function ResourcesPage() {
                         <li>
                             <a
                                 class="text-blue-700 hover:underline"
-                                href="TODO"
+                                href="https://drive.google.com/drive/folders/1ZROMGF4_GTKNafSe1rGrLr1Mn3LGcC1I?usp=sharing"
                                 target="_blank"
                             >
                                 2025-2026
@@ -81,7 +81,7 @@ export default function ResourcesPage() {
                         <li>
                             <a
                                 class="text-blue-700 hover:underline"
-                                href="TODO"
+                                href="https://drive.google.com/drive/folders/1O_Fu3jWiJqAfs6p2qLalk9nwNWH11aim?usp=sharing"
                                 target="_blank"
                             >
                                 2024-2025
