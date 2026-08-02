@@ -1,6 +1,7 @@
 import { MetaProvider, Title } from "@solidjs/meta";
 import FileBadge from "lucide-solid/icons/file-badge";
 import Images from "lucide-solid/icons/images";
+import Undo2 from "lucide-solid/icons/undo-2";
 import LinkButton from "~/components/LinkButton";
 
 export default function ResourcesPage() {
@@ -90,7 +91,14 @@ export default function ResourcesPage() {
                 </div>
             </div>
 
-            <LinkButton href="/" label="Back to Home" class="mt-8 w-fit mx-auto" />
+            <LinkButton
+                href="/"
+                label={<div class="flex items-center gap-2">
+                    <Undo2 class="w-5 h-5" />
+                    Back to Home
+                </div>}
+                class="mt-8 w-fit mx-auto"
+            />
         </main>
     );
 }

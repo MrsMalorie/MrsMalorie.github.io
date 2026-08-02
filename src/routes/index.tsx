@@ -1,4 +1,7 @@
 import { MetaProvider, Title } from "@solidjs/meta";
+import BookHeart from "lucide-solid/icons/book-heart";
+import NotepadText from "lucide-solid/icons/notepad-text";
+import Sun from "lucide-solid/icons/sun";
 import LinkButton from "~/components/LinkButton";
 
 interface BouncingBalloonProps {
@@ -32,9 +35,27 @@ export default function HomePage() {
 
             {/* Navigation */}
             <div class="flex flex-wrap justify-center items-center gap-8 mt-8 mx-8 z-5">
-                <LinkButton href="/class-library" label="Class Library" />
-                <LinkButton href="/today" label="In Class Today" />
-                <LinkButton href="/resources" label="Resources" />
+                <LinkButton
+                    href="/class-library"
+                    label={<div class="flex items-center gap-2">
+                        <BookHeart class="w-5 h-5" />
+                        Class Library
+                    </div>}
+                />
+                <LinkButton
+                    href="/today"
+                    label={<div class="flex items-center gap-2">
+                        <Sun class="w-5 h-5" />
+                        In Class Today
+                    </div>}
+                />
+                <LinkButton
+                    href="/resources"
+                    label={<div class="flex items-center gap-2">
+                        <NotepadText class="w-5 h-5" />
+                        Resources
+                    </div>}
+                />
             </div>
 
             {/* Background decoration */}

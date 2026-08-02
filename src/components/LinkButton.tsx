@@ -1,6 +1,8 @@
+import { JSX } from "solid-js";
+
 interface LinkButtonProps {
     href: string;
-    label: string;
+    label: string | JSX.Element;
 
     class?: string;
 }
