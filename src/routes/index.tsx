@@ -18,7 +18,7 @@ function BouncingBalloon(props: BouncingBalloonProps) {
 
 export default function HomePage() {
     return (
-        <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center relative">
+        <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden">
             <MetaProvider>
                 <Title>Mrs. Malorie's Classroom</Title>
             </MetaProvider>

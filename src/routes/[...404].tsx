@@ -1,7 +1,7 @@
 export default function NotFound() {
   return (
     <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center">
-        <div class="bg-white rounded-lg p-8 shadow-lg z-5 relative">
+        <div class="bg-white rounded-lg p-8 shadow-lg z-5 relative m-8">
             <h1 class="font-[Bitter] font-bold text-xl">
                 404 - Page Not Found
             </h1>
