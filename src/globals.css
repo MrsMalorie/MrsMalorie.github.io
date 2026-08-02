@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=Homemade+Apple&display=swap');
 @import "tailwindcss";
 
+* {
+    font-family: "Bitter", 'Times New Roman', Times, serif;
+}
+
 .striped-background {
     background-image: repeating-linear-gradient(
         -45deg,

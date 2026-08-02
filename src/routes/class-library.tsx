@@ -1,7 +1,11 @@
 import { MetaProvider, Title } from "@solidjs/meta";
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
+import LoadSpinner from "~/components/LoadSpinner";
 import BookController from "~/lib/controllers/BookController";
 import Book from "~/lib/types/Book";
+import ChevronLeft from "lucide-solid/icons/chevron-left";
+import ChevronRight from "lucide-solid/icons/chevron-right";
+import { count } from "~/lib/utils/array";
 
 const NULL_GENRE: string = "N/A";
 
@@ -72,7 +76,7 @@ export default function ClassLibraryPage() {
 
             <div class="min-h-screen striped-background border-x-20 border-x-[#d7a350] bg-blend-overlay bg-white/80 px-4 sm:px-8 py-16 flex flex-col gap-4">
                 <div class="space-y-2">
-                    <h1 class="font-[Bitter] font-bold text-3xl">Search the Class Library</h1>
+                    <h1 class="font-bold text-3xl">Search the Class Library</h1>
                     <hr />
                 </div>
 
@@ -80,11 +84,62 @@ export default function ClassLibraryPage() {
                     
                 </div>
 
-                <table class="w-full">
-                    <tbody>
+                <div>
+                    <Show when={loadingGenres() || loadingBooks()} fallback={<>
+                        <table class="w-full">
+                            <tbody>
 
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+
+                        <div class="flex flex-wrap items-center justify-center gap-4">
+                            <button
+                                class="cursor-pointer"
+                                onClick={() => {
+                                    const _pageIndex = pageIndex();
+                                    if (_pageIndex > 0) {
+                                        setPageIndex(_pageIndex - 1);
+                                    }
+                                }}
+                            >
+                                <ChevronLeft />
+                            </button>
+
+                            {count(
+                                Math.max(0, pageIndex() - 2),
+                                Math.min(5, pageCount())
+                            ).map((p_idx: number) => (
+                                <button
+                                    class={`${p_idx === pageIndex()
+                                        ? "text-gray-400"
+                                        : "cursor-pointer hover:underline"
+                                    }`}
+                                    onClick={() => {
+                                        if (p_idx !== pageIndex()) {
+                                            setPageIndex(p_idx);
+                                        }
+                                    }}
+                                >
+                                    {p_idx + 1}
+                                </button>
+                            ))}
+
+                            <button
+                                class="cursor-pointer"
+                                onClick={() => {
+                                    const _pageIndex = pageIndex();
+                                    if (_pageIndex < pageCount() - 1) {
+                                        setPageIndex(_pageIndex + 1);
+                                    }
+                                }}
+                            >
+                                <ChevronRight />
+                            </button>
+                        </div>
+                    </>}>
+                        <LoadSpinner />
+                    </Show>
+                </div>
             </div>
         </main>
     );

@@ -13,7 +13,7 @@ export default function ResourcesPage() {
 
             <div class="bg-white/80 rounded-lg shadow-lg p-8 flex flex-col gap-8">
                 <div class="space-y-2">
-                    <h1 class="font-[Bitter] font-bold text-3xl">
+                    <h1 class="font-bold text-3xl">
                         Class Resources
                     </h1>
                     <hr />
@@ -23,7 +23,7 @@ export default function ResourcesPage() {
                     <div class="flex items-end gap-2">
                         <FileBadge class="w-8 h-8" />
 
-                        <h2 class="font-[Bitter] font-bold text-xl">
+                        <h2 class="font-bold text-xl">
                             Overview
                         </h2>
                     </div>
@@ -54,7 +54,7 @@ export default function ResourcesPage() {
                     <div class="flex items-end gap-2">
                         <Images class="w-8 h-8" />
 
-                        <h2 class="font-[Bitter] font-bold text-xl">
+                        <h2 class="font-bold text-xl">
                             Class Photos
                         </h2>
                     </div>
