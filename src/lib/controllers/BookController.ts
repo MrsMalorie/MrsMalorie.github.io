@@ -1,5 +1,5 @@
 import Book from "../types/Book";
-import BookSearchRequest from "../types/BookSearchData";
+import BookSearchRequest from "../types/BookSearchRequest";
 import BookSearchResponse from "../types/BookSearchResponse";
 
 const SHEET_NAME: string = "Alphabetical%20by%20Title";

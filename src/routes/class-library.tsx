@@ -1,6 +1,69 @@
 import { MetaProvider, Title } from "@solidjs/meta";
+import { createEffect, createSignal, onMount } from "solid-js";
+import BookController from "~/lib/controllers/BookController";
+import Book from "~/lib/types/Book";
+
+const NULL_GENRE: string = "N/A";
+
+const LOWEST_READING_LEVEL: number = 0.0;
+const HIGHEST_READING_LEVEL: number = 13.0;
+
+const LOWEST_AR_POINTS: number = 0.0;
+const HIGHEST_AR_POINTS: number = 170; // Highest Point Value Computed Using World-Record Highest Word Count (August 2025)
+
+const PAGE_SIZE: number = 50;
 
 export default function ClassLibraryPage() {
+    const [loadingGenres, setLoadingGenres] = createSignal<boolean>(true);
+    const [loadingBooks, setLoadingBooks] = createSignal<boolean>(true);
+
+    const [books, setBooks] = createSignal<Book[]>([]);
+    const [pageIndex, setPageIndex] = createSignal<number>(0);
+    const [pageCount, setPageCount] = createSignal<number>(0);
+
+    const [genres, setGenres] = createSignal<string[]>([NULL_GENRE]);
+
+    const [searchTerm, setSearchTerm] = createSignal<string>("");
+    const [filterGenre, setFilterGenre] = createSignal<string>(NULL_GENRE);
+    const [filterAr, setFilterAr] = createSignal<boolean>(false);
+
+    const [lowLevel, setLowLevel] = createSignal<number>(LOWEST_READING_LEVEL);
+    const [highLevel, setHighLevel] = createSignal<number>(HIGHEST_READING_LEVEL);
+
+    const [lowPoints, setLowPoints] = createSignal<number>(LOWEST_AR_POINTS);
+    const [highPoints, setHighPoints] = createSignal<number>(HIGHEST_AR_POINTS);
+
+    onMount(async () => {
+        setLoadingGenres(true);
+        setGenres(await BookController.getAllGenres([NULL_GENRE]));
+        setLoadingGenres(false);
+    });
+
+    createEffect(async () => {
+        setLoadingBooks(true);
+
+        const response = await BookController.searchBooks({
+            term: searchTerm().trim().toLowerCase(),
+            genre: filterGenre() === NULL_GENRE ? undefined : filterGenre(),
+            filter_ar: filterAr(),
+            level_range: {
+                low: lowLevel(),
+                high: highLevel(),
+            },
+            point_range: {
+                low: lowPoints(),
+                high: highPoints(),
+            },
+            page: pageIndex(),
+            page_size: PAGE_SIZE,
+        });
+
+        setBooks(response.books);
+        setPageCount(response.pageCount);
+
+        setLoadingBooks(false);
+    });
+
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white min-h-screen px-4 sm:px-8">
             <MetaProvider>
@@ -14,7 +77,7 @@ export default function ClassLibraryPage() {
                 </div>
 
                 <div>
-
+                    
                 </div>
 
                 <table class="w-full">
