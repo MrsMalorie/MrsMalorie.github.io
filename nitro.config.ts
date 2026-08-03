@@ -1,5 +1,11 @@
-export default {
+export default defineNitroConfig({
+  preset: "static",
   prerender: {
-    routes: ["/"],
+    routes: [
+      "/",
+      "/class-library",
+      "/resources",
+      "/today",
+    ],
   },
-};
+});
