@@ -8,6 +8,7 @@ export default defineConfig({
   base,
   plugins: [
     solidStart({
+      ssr: false,
       server: {
         preset: "static",
       },
