@@ -10,6 +10,10 @@ export default defineConfig({
     solidStart({
       server: {
         preset: "static",
+        prerender: {
+          crawlLinks: true,
+          routes: ["/"],
+        },
       },
     }),
     tailwindcss(),
