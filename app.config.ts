@@ -4,4 +4,12 @@ export default defineConfig({
   server: {
     preset: "static",
   },
+  prerender: {
+    routes: [
+      "/",
+      "/class-library",
+      "/resources",
+      "/today",
+    ],
+  },
 });
