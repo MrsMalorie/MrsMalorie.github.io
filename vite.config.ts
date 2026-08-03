@@ -10,15 +10,6 @@ export default defineConfig({
   base,
   plugins: [
     solidStart(),
-    nitro({
-      static: true,
-      baseURL: base,
-      prerender: {
-        routes: ["/"],
-        crawlLinks: true,
-        failOnError: true,
-      },
-    }),
     tailwindcss(),
   ]
 });
