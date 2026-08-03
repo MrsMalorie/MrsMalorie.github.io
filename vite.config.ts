@@ -7,7 +7,11 @@ const base = process.env.BASE_PATH ?? "/";
 export default defineConfig({
   base,
   plugins: [
-    solidStart(),
+    solidStart({
+      server: {
+        preset: "static",
+      },
+    }),
     tailwindcss(),
   ]
 });
