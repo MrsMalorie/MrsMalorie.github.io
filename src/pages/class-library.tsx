@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
 import LoadSpinner from "../components/LoadSpinner";
 import BookController from "../lib/controllers/BookController";
 import Book from "../lib/types/Book";
@@ -7,6 +7,8 @@ import ChevronRight from "lucide-solid/icons/chevron-right";
 import BadgeCheck from "lucide-solid/icons/badge-check";
 import BadgeX from "lucide-solid/icons/badge-x";
 import { count } from "../lib/utils/array";
+import TextInput from "../components/TextInput";
+import { Search, Undo2 } from "lucide-solid";
 
 const NULL_GENRE: string = "N/A";
 
@@ -17,6 +19,8 @@ const LOWEST_AR_POINTS: number = 0.0;
 const HIGHEST_AR_POINTS: number = 170; // Highest Point Value Computed Using World-Record Highest Word Count (August 2025)
 
 const PAGE_SIZE: number = 50;
+
+const SEARCH_TIMEOUT_MS: number = 500;
 
 function BookTableRow(book: Book, index: number) {
     const has_ar = book.ar_data != undefined;
@@ -91,8 +95,12 @@ function BookTableRow(book: Book, index: number) {
 }
 
 export default function ClassLibraryPage() {
+    let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+
     const [loadingGenres, setLoadingGenres] = createSignal<boolean>(true);
     const [loadingBooks, setLoadingBooks] = createSignal<boolean>(true);
+
+    const [searchError, setSearchError] = createSignal<string | null>(null);
 
     const [books, setBooks] = createSignal<Book[]>([]);
     const [pageIndex, setPageIndex] = createSignal<number>(0);
@@ -112,49 +120,102 @@ export default function ClassLibraryPage() {
 
     onMount(async () => {
         setLoadingGenres(true);
-        setGenres(await BookController.getAllGenres([NULL_GENRE]));
-        setLoadingGenres(false);
+
+        try {
+            setGenres(await BookController.getAllGenres([NULL_GENRE]));
+            setLoadingGenres(false);
+        } catch (ex) {
+            setSearchError(`An error occured while getting genres from the library: ${ex}`);
+        } finally {
+            setLoadingGenres(false);
+        }
     });
 
     createEffect(async () => {
-        setLoadingBooks(true);
+        if (searchTimeout !== null) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+        }
 
-        const response = await BookController.searchBooks({
-            term: searchTerm().trim().toLowerCase(),
-            genre: filterGenre() === NULL_GENRE ? undefined : filterGenre(),
-            filter_ar: filterAr(),
-            level_range: {
-                low: lowLevel(),
-                high: highLevel(),
-            },
-            point_range: {
-                low: lowPoints(),
-                high: highPoints(),
-            },
-            page: pageIndex(),
-            page_size: PAGE_SIZE,
-        });
+        const _searchTerm = searchTerm().trim().toLowerCase();
+        const _filterGenre = filterGenre() === NULL_GENRE ? undefined : filterGenre();
+        const _filterAr = filterAr();
+        const _lowLevel = lowLevel();
+        const _highLevel = highLevel();
+        const _lowPoints = lowPoints();
+        const _highPoints = highPoints();
+        const _pageIndex = pageIndex();
 
-        setBooks(response.books);
-        setPageCount(response.pageCount);
+        searchTimeout = setTimeout(async () => {
+            setLoadingBooks(true);
 
-        setLoadingBooks(false);
+            try {
+                const response = await BookController.searchBooks({
+                    term: _searchTerm,
+                    genre: _filterGenre,
+                    filter_ar: _filterAr,
+                    level_range: {
+                        low: _lowLevel,
+                        high: _highLevel,
+                    },
+                    point_range: {
+                        low: _lowPoints,
+                        high: _highPoints,
+                    },
+                    page: _pageIndex,
+                    page_size: PAGE_SIZE,
+                });
+
+                setBooks(response.books);
+                setPageCount(response.pageCount);
+            } catch (ex) {
+                setSearchError(`An error occured while searching the library: ${ex}`);
+            } finally {
+                setLoadingBooks(false);
+            }
+        }, SEARCH_TIMEOUT_MS);
+    });
+
+    onCleanup(() => {
+        if (searchTimeout !== null) {
+            clearTimeout(searchTimeout);
+            searchTimeout = null;
+        }
     });
 
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white min-h-screen px-4 sm:px-8">
             <div class="min-h-screen striped-background border-x-20 border-x-[#d7a350] bg-blend-overlay bg-white/90 px-4 sm:px-8 py-16 flex flex-col gap-4">
                 <div class="space-y-2">
-                    <h1 class="font-bold text-3xl">Search the Class Library</h1>
+                    <div class="flex flex-wrap items-end w-full gap-2">
+                        <h1 class="font-bold text-3xl">Search the Class Library</h1>
+                        <a href="/" class="ml-auto inline-flex gap-2 items-center text-blue-700 hover:underline">
+                            <Undo2 class="w-5 h-5" />
+                            Back Home
+                        </a>
+                    </div>
                     <hr />
                 </div>
 
-                <div>
-                    
+                <div class="space-y-4">
+                    <TextInput
+                        icon={<Search class="w-4 h-4" />}
+                        placeholder="Search..."
+                        value={searchTerm()}
+                        onValueChange={setSearchTerm}
+                    />
+
+                    <div class="flex flex-wrap gap-8 items-start justify-between">
+                        
+                    </div>
                 </div>
 
                 <div>
-                    <Show when={loadingGenres() || loadingBooks()} fallback={<>
+                    <Show when={loadingGenres() || loadingBooks()} fallback={<Show when={searchError() === null} fallback={
+                        <div class="bg-red-200 text-red-600 px-3 py-2 rounded-md border border-red-600">
+                            {searchError()}
+                        </div>
+                    }>
                         <table class="w-full">
                             <tbody>
                                 {books().map(BookTableRow)}
@@ -205,7 +266,7 @@ export default function ClassLibraryPage() {
                                 <ChevronRight />
                             </button>
                         </div>
-                    </>}>
+                    </Show>}>
                         <LoadSpinner />
                     </Show>
                 </div>
