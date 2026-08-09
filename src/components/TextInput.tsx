@@ -14,7 +14,7 @@ export default function TextInput(props: TextInputProps) {
 
     return (
         <div
-            class="bg-white rounded-full border px-3 py-2 flex items-center gap-2 text-md"
+            class="bg-white rounded-full border px-3 py-2 flex items-center gap-2 text-md cursor-text"
             onClick={() => {
                 inputRef?.focus();
             }}
