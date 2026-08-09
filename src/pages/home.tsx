@@ -1,4 +1,3 @@
-import { MetaProvider, Title } from "@solidjs/meta";
 import BookHeart from "lucide-solid/icons/book-heart";
 import NotepadText from "lucide-solid/icons/notepad-text";
 import Sun from "lucide-solid/icons/sun";
@@ -22,10 +21,6 @@ function BouncingBalloon(props: BouncingBalloonProps) {
 export default function HomePage() {
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden">
-            <MetaProvider>
-                <Title>Mrs. Malorie's Classroom</Title>
-            </MetaProvider>
-
             {/* Header */}
             <div class="text-center z-5 text-shadow-lg/100 text-shadow-white">
                 <h1 class="font-[Homemade_Apple] text-4xl sm:text-5xl lg:text-6xl mb-2">

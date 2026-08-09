@@ -1,4 +1,3 @@
-import { MetaProvider, Title } from "@solidjs/meta";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import LoadSpinner from "../components/LoadSpinner";
 import BookController from "../lib/controllers/BookController";
@@ -144,10 +143,6 @@ export default function ClassLibraryPage() {
 
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white min-h-screen px-4 sm:px-8">
-            <MetaProvider>
-                <Title>Class Library</Title>
-            </MetaProvider>
-
             <div class="min-h-screen striped-background border-x-20 border-x-[#d7a350] bg-blend-overlay bg-white/90 px-4 sm:px-8 py-16 flex flex-col gap-4">
                 <div class="space-y-2">
                     <h1 class="font-bold text-3xl">Search the Class Library</h1>

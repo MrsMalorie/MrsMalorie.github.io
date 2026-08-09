@@ -1,4 +1,3 @@
-import { MetaProvider, Title } from "@solidjs/meta";
 import FileBadge from "lucide-solid/icons/file-badge";
 import Images from "lucide-solid/icons/images";
 import Undo2 from "lucide-solid/icons/undo-2";
@@ -7,10 +6,6 @@ import LinkButton from "../components/LinkButton";
 export default function ResourcesPage() {
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white min-h-screen px-8 py-16">
-            <MetaProvider>
-                <Title>Resources</Title>
-            </MetaProvider>
-
             <div class="bg-white/80 rounded-lg shadow-lg p-8 flex flex-col gap-8">
                 <div class="space-y-2">
                     <h1 class="font-bold text-3xl">
