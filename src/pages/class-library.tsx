@@ -10,6 +10,7 @@ import { count } from "../lib/utils/array";
 import TextInput from "../components/TextInput";
 import { Search, Undo2 } from "lucide-solid";
 import BooleanInput from "../components/BooleanInput";
+import RangeInput from "../components/RangeInput";
 
 const NULL_GENRE: string = "N/A";
 
@@ -207,11 +208,35 @@ export default function ClassLibraryPage() {
                     />
 
                     <div class="flex flex-wrap gap-8 items-start justify-between">
-                        <div class="text-lg flex flex-row items-center gap-2 font-medium">
+                        <div class="text-lg flex items-center gap-2 font-medium">
                             <span>Only AR:</span>
                             <BooleanInput
                                 value={filterAr()}
                                 onValueChange={setFilterAr}
+                            />
+                        </div>
+
+                        <div class="text-lg flex flex-col items-center gap-2 font-medium">
+                            <span>Reading Level</span>
+                            <RangeInput
+                                min={LOWEST_READING_LEVEL}
+                                max={HIGHEST_READING_LEVEL}
+                                minValue={lowLevel()}
+                                maxValue={highLevel()}
+                                onMinValueChange={setLowLevel}
+                                onMaxValueChange={setHighLevel}
+                            />
+                        </div>
+
+                        <div class="text-lg flex flex-col items-center gap-2 font-medium">
+                            <span>AR Points</span>
+                            <RangeInput
+                                min={LOWEST_AR_POINTS}
+                                max={HIGHEST_AR_POINTS}
+                                minValue={lowPoints()}
+                                maxValue={highPoints()}
+                                onMinValueChange={setLowPoints}
+                                onMaxValueChange={setHighPoints}
                             />
                         </div>
                     </div>

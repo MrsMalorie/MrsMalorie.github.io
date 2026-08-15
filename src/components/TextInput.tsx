@@ -5,8 +5,8 @@ export interface TextInputProps {
     maxLength?: number;
     placeholder?: string;
 
-    value?: string;
-    onValueChange?: (value: string) => void;
+    value: string;
+    onValueChange: (value: string) => void;
 }
 
 export default function TextInput(props: TextInputProps) {
