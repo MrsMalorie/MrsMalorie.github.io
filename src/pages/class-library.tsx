@@ -11,8 +11,9 @@ import TextInput from "../components/TextInput";
 import { Search, Undo2 } from "lucide-solid";
 import BooleanInput from "../components/BooleanInput";
 import RangeInput from "../components/RangeInput";
+import Dropdown from "../components/Dropdown";
 
-const NULL_GENRE: string = "N/A";
+const NULL_GENRE: string = "All Genres";
 
 const LOWEST_READING_LEVEL: number = 0.0;
 const HIGHEST_READING_LEVEL: number = 13.0;
@@ -213,6 +214,15 @@ export default function ClassLibraryPage() {
                             <BooleanInput
                                 value={filterAr()}
                                 onValueChange={setFilterAr}
+                            />
+                        </div>
+
+                        <div class="text-lg flex items-center gap-2 font-medium">
+                            <span>Genre:</span>
+                            <Dropdown
+                                value={filterGenre()}
+                                onValueChange={setFilterGenre}
+                                options={genres()}
                             />
                         </div>
 
