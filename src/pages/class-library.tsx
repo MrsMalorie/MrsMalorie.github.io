@@ -9,6 +9,7 @@ import BadgeX from "lucide-solid/icons/badge-x";
 import { count } from "../lib/utils/array";
 import TextInput from "../components/TextInput";
 import { Search, Undo2 } from "lucide-solid";
+import BooleanInput from "../components/BooleanInput";
 
 const NULL_GENRE: string = "N/A";
 
@@ -185,7 +186,7 @@ export default function ClassLibraryPage() {
 
     return (
         <main class="bg-gradient-to-b from-blue-300 to-white min-h-screen px-4 sm:px-8">
-            <div class="min-h-screen striped-background border-x-20 border-x-[#d7a350] bg-blend-overlay bg-white/90 px-4 sm:px-8 py-16 flex flex-col gap-4">
+            <div class="min-h-screen striped-background border-x-20 border-x-[#d7a350] bg-blend-overlay bg-white/90 px-4 sm:px-8 py-16 flex flex-col gap-8">
                 <div class="space-y-2">
                     <div class="flex flex-wrap items-end w-full gap-2">
                         <h1 class="font-bold text-3xl">Search the Class Library</h1>
@@ -206,7 +207,13 @@ export default function ClassLibraryPage() {
                     />
 
                     <div class="flex flex-wrap gap-8 items-start justify-between">
-                        
+                        <div class="text-lg flex flex-row items-center gap-2 font-medium">
+                            <span>Only AR:</span>
+                            <BooleanInput
+                                value={filterAr()}
+                                onValueChange={setFilterAr}
+                            />
+                        </div>
                     </div>
                 </div>
 
