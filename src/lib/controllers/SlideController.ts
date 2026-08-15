@@ -19,25 +19,47 @@ export default class SlideController {
         const today = new Date();
         const slideKey = `${today.getMonth() + 1}/${today.getDate()}`;
 
-        const response = await fetch(
-            SlideController.buildSheetLink(`SELECT D WHERE A CONTAINS '${slideKey}'`)
-        );
+        const [dailyResponse, staticResponse] = await Promise.all([
+            fetch(
+                SlideController.buildSheetLink(`SELECT B, D, C WHERE A CONTAINS '${slideKey}'`)
+            ),
+            fetch(
+                SlideController.buildSheetLink(`SELECT F, G WHERE A CONTAINS '1/1'`)
+            )
+        ]);
 
-        if (!response.ok) throw new Error("Failed to query the title slide.");
+        if (!dailyResponse.ok) throw new Error("Failed to query the title slide.");
+        if (!staticResponse.ok) throw new Error("Failed to query the title slide.");
 
-        const text = await response.text();
-        const matched_text = text.match(SHEET_SANITIZATION_MATCH);
-        if (!matched_text) throw new Error(`Missing data for key ${slideKey}.`);
+        const [dailyText, staticText] = await Promise.all([dailyResponse.text(), staticResponse.text()]);
 
-        const json = JSON.parse(matched_text[0]);
-        const rows = json?.table?.rows;
-        if (!rows) throw new Error(`Missing data for key ${slideKey}.`);
+        const dailyMatch = dailyText.match(SHEET_SANITIZATION_MATCH);
+        if (!dailyMatch) throw new Error(`Missing data for key ${slideKey}.`);
 
-        const data = rows[0];
-        if (!data) throw new Error(`Missing data for key ${slideKey}.`);
+        const staticMatch = staticText.match(SHEET_SANITIZATION_MATCH);
+        if (!staticMatch) throw new Error(`Missing static data.`);
+
+        const dailyJson = JSON.parse(dailyMatch[0]);
+        const dailyRows = dailyJson?.table?.rows;
+        if (!dailyRows) throw new Error(`Missing data for key ${slideKey}.`);
+
+        const staticJson = JSON.parse(staticMatch[0]);
+        const staticRows = staticJson?.table?.rows;
+        if (!staticRows) throw new Error(`Missing static data.`);
+
+        const dailyData = dailyRows[0];
+        if (!dailyData) throw new Error(`Missing data for key ${slideKey}.`);
+
+        const staticData = staticRows[0];
+        if (!staticData) throw new Error(`Missing static data.`);
 
         return {
-            memeUrl: data.c[0]?.v,
+            memeUrl: dailyData.c[1]?.v,
+            thisDayInHistory: dailyData.c[0]?.v ?? "Nothing apparently...",
+            discussion: dailyData.c[2]?.v ?? "",
+
+            mustDos: ((staticData.c[0]?.v ?? "") as string).replaceAll("- ", "").split("\n"),
+            mayDos: ((staticData.c[1]?.v ?? "") as string).replaceAll("- ", "").split("\n"),
         }
     }
 }
