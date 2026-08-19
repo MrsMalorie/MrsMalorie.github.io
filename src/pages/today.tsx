@@ -14,12 +14,12 @@ export default function TodayPage() {
         try {
             setTitleSlide(await SlideController.getTitleSlide());
         } catch (ex) {
-
+            console.error("Failed to fetch title slide:", ex);
         }
     });
 
     return (
-        <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden">
+        <main class="bg-gradient-to-b from-blue-300 to-white w-screen h-screen flex flex-col items-center justify-center relative overflow-hidden gap-12">
             <img
                 src="/assets/cloud_long.webp"
                 class="absolute animate-[slide-right_60s_linear_infinite] w-[20vw] top-[2%] min-w-[200px]"
@@ -33,22 +33,22 @@ export default function TodayPage() {
             />
 
             <div class="text-center z-10">
-                <p class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[0.5rem]">
+                <p class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-[0.25rem]">
                     {
                         today.toLocaleString('en-US', { month: 'long' })
                     }&nbsp;{
                         getOrdinal(today.getDate())
                     }
                 </p>
-                <h1 class="font-[Homemade_Apple] text-6xl sm:text-7xl lg:text-8xl mt-10 mb-20">
+                <h1 class="font-[Homemade_Apple] text-4xl sm:text-5xl lg:text-6xl mt-10">
                     Good Morning!
                 </h1>
             </div>
 
-            <div class="w-full flex flex-col justify-center gap-4 z-10">
+            <div class="w-full flex flex-col justify-center gap-8 z-10">
                 <div class="flex items-start justify-around gap-8">
-                    <div class="space-y-4 text-lg sm:text-xl lg:text-2xl">
-                        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[0.5rem]">
+                    <div class="space-y-4 text-md sm:text-lg lg:text-xl">
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-[0.25rem]">
                             Must Do:
                         </h2>
 
@@ -59,8 +59,8 @@ export default function TodayPage() {
                         </ul>
                     </div>
 
-                    <div class="space-y-4 text-lg sm:text-xl lg:text-2xl">
-                        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[0.5rem]">
+                    <div class="space-y-4 text-md sm:text-lg lg:text-xl">
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-[0.25rem]">
                             May Do:
                         </h2>
 
@@ -79,12 +79,12 @@ export default function TodayPage() {
                 </div>
 
                 <div class="flex justify-around gap-8">
-                    <div class="space-y-4 text-lg sm:text-xl lg:text-2xl">
-                        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[0.5rem]">
+                    <div class="space-y-4 text-md sm:text-lg lg:text-xl">
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-[0.25rem]">
                             On this day in history:&emsp;&emsp;
                         </h2>
 
-                        <p class="space-y-4 text-2xl sm:text-3xl lg:text-4xl">{titleSlide()?.thisDayInHistory}</p>
+                        <p class="space-y-4 text-lg sm:text-xl lg:text-2xl">{titleSlide()?.thisDayInHistory}</p>
 
                         <hr class="text-blue-700" />
 
@@ -95,15 +95,21 @@ export default function TodayPage() {
                         <img
                             src="/assets/american_flag.webp"
                             alt="American Flag"
-                            class={`${showAmericanFlag() ? "absolute top-0 left-[50%] w-screen h-screen -translate-x-[50%]" : "w-auto max-h-30 mx-auto"} cursor-pointer z-50 transition duration-300 ease-in-out`}
-                            onClick={() => setShowAmericanFlag(!showAmericanFlag())}
+                            class={`${showAmericanFlag() ? "absolute top-0 left-[50%] h-screen -translate-x-[50%]" : "max-h-30 mx-auto"} w-auto cursor-pointer z-50 transition duration-300 ease-in-out`}
+                            onClick={() => {
+                                setShowAmericanFlag(!showAmericanFlag());
+                                setShowOklahomaFlag(false);
+                            }}
                         />
 
                         <img
                             src="/assets/oklahoma_flag.webp"
                             alt="Oklahoma Flag"
-                            class={`${showOklahomaFlag() ? "absolute top-0 left-[50%] w-screen h-screen -translate-x-[50%]" : "w-auto max-h-30 mx-auto"} cursor-pointer z-50 transition duration-300 ease-in-out`}
-                            onClick={() => setShowOklahomaFlag(!showOklahomaFlag())}
+                            class={`${showOklahomaFlag() ? "absolute top-0 left-[50%] h-screen -translate-x-[50%]" : "max-h-30 mx-auto"} w-auto cursor-pointer z-50 transition duration-300 ease-in-out`}
+                            onClick={() => {
+                                setShowAmericanFlag(false);
+                                setShowOklahomaFlag(!showOklahomaFlag());
+                            }}
                         />
                     </div>
                 </div>
